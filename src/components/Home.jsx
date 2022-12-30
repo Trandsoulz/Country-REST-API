@@ -1,10 +1,13 @@
 import { data } from "autoprefixer";
 import { Result } from "postcss";
 import { useState, useEffect } from "react";
+import { ImSpinner8 } from "react-icons/im";
 
-const Home = () => {
+const Home = ({ errorToast }) => {
   const [countryName, setCountryName] = useState("");
   const [country, setCountry] = useState();
+  const [errorCountry, setErrorCountry] = useState(false);
+  const [processing, setProcessing] = useState(false);
   // const [unknownResult, setUnknownResult] = useState();
 
   // API-KEY
@@ -18,28 +21,29 @@ const Home = () => {
   // Search function
   const searchCountry = async () => {
     try {
-      console.log(countryName);
+      setProcessing(true);
+      if (countryName.length==0){
+        setProcessing(false);
+        setErrorCountry(true);
+        errorToast("Please input a valid country");
+        return '';
+      }
+      setErrorCountry(false);
       const res = await fetch(apiKey);
       const data = await res.json();
-      setCountry(data[0]);
-      console.log(data[0]);
-      console.log();
+      if (data.status===404){
+        setProcessing(false);
+        setErrorCountry(true);
+        errorToast("Please enter a valid country");
+        return '';
+      }else{
+        setProcessing(false);
+        setCountry(data[0]);
+      }
     } catch (err) {
+      setProcessing(false);
       console.err(err);
     }
-
-    // if (countryName == "") {
-    //   setUnknownResult("Input a country");
-    // } else {
-    //   setUnknownResult("Input a valid country");
-    // }
-
-    // .then((res) => res.json())
-    // .then((data) => {
-    //   // console.log(data[0]);
-    //   setCountry(data[0]);
-    //   console.log(country);
-    // });
   };
 
   // Result of the search
@@ -95,23 +99,8 @@ const Home = () => {
     </div>
   );
 
-  // const errResult = <h2>Please input a country</h2>;
-  // const errResult2 = <h2>Please input a valid country</h2>;
-
-  // const checkCountry = () => {
-  //   if (countryName) {
-  //     result;
-  //   } else if ((countryName = "")) {
-  //     errResult;
-  //   } else {
-  //     errResult2;
-  //   }
-  // };
-
-  // const searchCountries = searchCountry().then((data) => setCountry(data));
-
   useEffect(() => {
-    searchCountry();
+    // You no need call searchCountry here
   }, []);
 
   return (
@@ -126,14 +115,15 @@ const Home = () => {
               onChange={setChangedCountry}
               // id="CountryName"
               placeholder="Enter a country name here"
-              className="outline-none border-b-2 mx-2  border-[#3d64e6]"
+              className={`outline-none border-b-2 mx-2  ${errorCountry?'border-[#FF0000] vibrateDiv':'border-[#3d64e6]'}`}
             />
-            <input
+            <button
               type="button"
-              value="Search"
-              className="ml-4 mr-2 bg-[#3d64e6] px-4 py-2 rounded-xl  cursor-pointer text-white"
+              className="ml-4 mr-2 bg-[#3d64e6] px-4 py-2 rounded-xl  cursor-pointer text-white spin"
               onClick={searchCountry}
-            />
+            >
+              {processing?<ImSpinner8 />:"Search"}
+            </button>
           </div>
 
           {result}
