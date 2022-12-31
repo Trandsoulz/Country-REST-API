@@ -1,17 +1,19 @@
 import { data } from "autoprefixer";
 import { Result } from "postcss";
 import { useState, useEffect } from "react";
-import { ImSpinner8 } from "react-icons/im";
+import { ImSpinner10 } from "react-icons/im";
 
 const Home = ({ errorToast }) => {
   const [countryName, setCountryName] = useState("");
   const [country, setCountry] = useState();
   const [errorCountry, setErrorCountry] = useState(false);
   const [processing, setProcessing] = useState(false);
-  // const [unknownResult, setUnknownResult] = useState();
 
   // API-KEY
   const apiKey = `https://restcountries.com/v3.1/name/${countryName}?fullText=true`;
+
+  // REST COUNTRY API
+  //  https://restcountries.com/#api-endpoints-v3-list-of-codes
 
   // Value from input
   const setChangedCountry = (e) => {
@@ -22,21 +24,21 @@ const Home = ({ errorToast }) => {
   const searchCountry = async () => {
     try {
       setProcessing(true);
-      if (countryName.length==0){
+      if (countryName == "") {
         setProcessing(false);
         setErrorCountry(true);
-        errorToast("Please input a valid country");
-        return '';
+        errorToast("Please enter a country");
+        return "";
       }
       setErrorCountry(false);
       const res = await fetch(apiKey);
       const data = await res.json();
-      if (data.status===404){
+      if (data.status === 404) {
         setProcessing(false);
         setErrorCountry(true);
         errorToast("Please enter a valid country");
-        return '';
-      }else{
+        return "";
+      } else {
         setProcessing(false);
         setCountry(data[0]);
       }
@@ -115,14 +117,19 @@ const Home = ({ errorToast }) => {
               onChange={setChangedCountry}
               // id="CountryName"
               placeholder="Enter a country name here"
-              className={`outline-none border-b-2 mx-2  ${errorCountry?'border-[#FF0000] vibrateDiv':'border-[#3d64e6]'}`}
+              className={`outline-none border-b-2 mx-2  ${
+                errorCountry
+                  ? "border-[#FF0000] vibrateDiv"
+                  : "border-[#3d64e6]"
+              }`}
             />
             <button
               type="button"
-              className="ml-4 mr-2 bg-[#3d64e6] px-4 py-2 rounded-xl  cursor-pointer text-white spin"
+              className="ml-4 mr-2 bg-[#3d64e6] px-4 py-2 rounded-xl  cursor-pointer text-white"
+              // spin class
               onClick={searchCountry}
             >
-              {processing?<ImSpinner8 />:"Search"}
+              {processing ? <ImSpinner10 className="animate-spin" /> : "Search"}
             </button>
           </div>
 
