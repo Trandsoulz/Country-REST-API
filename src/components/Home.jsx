@@ -41,6 +41,7 @@ const Home = ({ errorToast }) => {
       } else {
         setProcessing(false);
         setCountry(data[0]);
+        console.log(data[0]);
       }
     } catch (err) {
       setProcessing(false);
@@ -72,6 +73,12 @@ const Home = ({ errorToast }) => {
           {country.currencies[Object.keys(country.currencies)].name +
             " - " +
             country.currencies[Object.keys(country.currencies)].symbol}
+        </span>
+      </h2>
+      <h2 className="p-2 text-true-gray-400 font-semibold">
+        Country Code:{" "}
+        <span className="font-medium">
+          {country.idd.root + country.idd.suffixes[0]}
         </span>
       </h2>
       <h2 className="p-2 text-true-gray-400 font-semibold">
